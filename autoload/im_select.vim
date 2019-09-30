@@ -89,23 +89,30 @@ else
   function s:ImSetJob.new(cmd) abort
     let object = copy(s:ImSetJob)
     let object.cmd = a:cmd
-    let object.id = job_start(object.cmd, object)
+    let object.id = job_start(object.cmd)
     return object
   endfunction
 
   let s:ImGetJob = {}
 
   function s:ImGetJob.out_cb(channel, msg) abort
-    let self.stdout = self.stdout . ch_readraw(a:channel)
+    while ch_status(a:channel, {'part': 'out'}) == 'buffered'
+      let self.stdout = self.stdout . ch_readraw(a:channel)
+    endwhile
   endfunction
 
   function s:ImGetJob.err_cb(channel, msg) abort
-    let self.stderr = self.stderr . ch_readraw(a:channel)
+    while ch_status(a:channel, {'part': 'err'}) == 'buffered'
+      let self.stderr = self.stderr . ch_readraw(a:channel)
+    endwhile
   endfunction
 
   function s:ImGetJob.exit_cb(job, status) abort
+    let self.result = call(self.callback, [a:status, self.stdout, self.stderr])
+    if self.set_prev_im
+      let g:im_select_prev_im = self.result
+    endif
     let self.is_running = 0
-    let g:im_select_prev_im = call(self.callback, [a:status, self.stdout, self.stderr])
   endfunction
 
   function s:ImGetJob.wait() abort
@@ -114,13 +121,18 @@ else
     endwhile
   endfunction
 
-  function s:ImGetJob.new(cmd, callback) abort
+  function s:ImGetJob.new(cmd, callback, set_prev_im) abort
     let object = copy(s:ImGetJob)
     let object.cmd = a:cmd
     let object.callback = function(a:callback)
+    let object.set_prev_im = a:set_prev_im
     let object.stdout = ''
     let object.stderr = ''
-    let object.id = job_start(object.cmd, object)
+    let object.id = job_start(object.cmd, {
+          \ 'out_cb': object.out_cb,
+          \ 'err_cb': object.err_cb,
+          \ 'exit_cb': object.exit_cb
+          \ })
     let object.is_running = 1
     return object
   endfunction
