@@ -50,4 +50,4 @@ This variable can be set to your own default IM key.
 
 ### `g:im_select_command`
 
-This variable can be set to the `im-select` program path of your own.
+This variable can be set to the `im-select` program path of your own (only useful on macOS and Windows).
