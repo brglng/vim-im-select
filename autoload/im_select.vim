@@ -1,4 +1,4 @@
-let s:focus_autocmd_enabled = 1
+let s:focus_event_enabled = 1
 
 function! im_select#rstrip(str, chars) abort
   if strlen(a:str) > 0 && strlen(a:chars) > 0
@@ -43,152 +43,154 @@ function! im_select#get_os() abort
 endfunction
 
 if has('nvim')
-  let s:Job = {}
+  let s:ImSetJob = {}
 
-  function s:Job.on_stdout(_job_id, data, _event)
+  function s:ImSetJob.new(cmd) abort
+    let object = copy(s:ImSetJob)
+    let object.cmd = a:cmd
+    let object.id = jobstart(object.cmd, object)
+    return object
+  endfunction
+
+  let s:ImGetJob = {}
+
+  function s:ImGetJob.on_stdout(job_id, data, event) abort
     let self.stdout = self.stdout . join(a:data)
   endfunction
 
-  function s:Job.on_stderr(_job_id, data, _event)
+  function s:ImGetJob.on_stderr(job_id, data, event) abort
     let self.stderr = self.stderr . join(a:data)
   endfunction
 
-  function s:Job.on_exit(_job_id, data, _event)
-    call call(self.callback, [a:data, self.stdout, self.stderr])
+  function s:ImGetJob.on_exit(job_id, data, event) abort
+    let self.result = call(self.callback, [a:data, self.stdout, self.stderr])
+    if self.set_prev_im
+      let g:im_select_prev_im = self.result
+    endif
   endfunction
 
-  function s:Job.new(cmd, callback)
-    let object = copy(s:Job)
+  function s:ImGetJob.wait() abort
+    call jobwait([self.id])
+  endfunction
+
+  function s:ImGetJob.new(cmd, callback, set_prev_im) abort
+    let object = copy(s:ImGetJob)
     let object.cmd = a:cmd
     let object.callback = a:callback
+    let object.set_prev_im = a:set_prev_im
     let object.stdout = ''
     let object.stderr = ''
     let object.id = jobstart(object.cmd, object)
     return object
   endfunction
 else
-  let s:Job = {}
+  let s:ImSetJob = {}
 
-  function s:Job.out_cb(channel, _msg)
+  function s:ImSetJob.new(cmd) abort
+    let object = copy(s:ImSetJob)
+    let object.cmd = a:cmd
+    let object.id = job_start(object.cmd, object)
+    return object
+  endfunction
+
+  let s:ImGetJob = {}
+
+  function s:ImGetJob.out_cb(channel, msg) abort
     let self.stdout = self.stdout . ch_readraw(a:channel)
   endfunction
 
-  function s:Job.err_cb(channel, _msg)
+  function s:ImGetJob.err_cb(channel, msg) abort
     let self.stderr = self.stderr . ch_readraw(a:channel)
   endfunction
 
-  function s:Job.exit_cb(_job, status)
-    call call(self.callback, [a:status, self.stdout, self.stderr])
+  function s:ImGetJob.exit_cb(job, status) abort
+    let self.is_running = 0
+    let g:im_select_prev_im = call(self.callback, [a:status, self.stdout, self.stderr])
   endfunction
 
-  function s:Job.new(cmd, callback)
-    let object = copy(im_select#job)
+  function s:ImGetJob.wait() abort
+    while self.is_running
+      sleep 10m
+    endwhile
+  endfunction
+
+  function s:ImGetJob.new(cmd, callback) abort
+    let object = copy(s:ImGetJob)
     let object.cmd = a:cmd
-    let object.callback = a:callback
+    let object.callback = function(a:callback)
     let object.stdout = ''
     let object.stderr = ''
     let object.id = job_start(object.cmd, object)
+    let object.is_running = 1
     return object
   endfunction
 endif
 
-function! im_select#gnome_shell_get_im() abort
-  silent let out_tuple = system('gdbus call --session --dest org.gnome.Shell --object-path /org/gnome/Shell --method org.gnome.Shell.Eval "imports.ui.status.keyboard.getInputSourceManager()._mruSources[0].index"')
-  let i = stridx(out_tuple, ',') + 3
-  let j = stridx(out_tuple, ')') - 1
-  let result = strpart(out_tuple, i, j - i)
+function! im_select#gnome_shell_get_im_callback(status, stdout, stderr) abort
+  let i = stridx(a:stdout, ',') + 3
+  let j = stridx(a:stdout, ')') - 1
+  let result = strpart(a:stdout, i, j - i)
   return result
 endfunction
 
-function! im_select#_gnome_shell_set_im_timer_handler(timer) abort
-  let s:focus_autocmd_enabled = 1
+function! im_select#default_get_im_callback(status, stdout, stderr) abort
+  return im_select#rstrip(a:stdout)
 endfunction
 
-function! im_select#gnome_shell_set_im(im) abort
-  " Hack, this gdbus call steals focus
-  let s:focus_autocmd_enabled = 0
-  call s:Job.new([
-        \   'gdbus',
-        \   'call',
-        \   '--session',
-        \   '--dest',
-        \   'org.gnome.Shell',
-        \   '--object-path',
-        \   '/org/gnome/Shell',
-        \   '--method',
-        \   'org.gnome.Shell.Eval',
-        \   'imports.ui.status.keyboard.getInputSourceManager().inputSources[' . a:im . '].activate()'
-        \ ],
-        \ {status, stdout, stderr -> []})
-  call timer_start(40, "im_select#_gnome_shell_set_im_timer_handler")
-endfunction
-
-function! im_select#ibus_get_im() abort
-  return system('ibus engine')
-endfunction
-
-function! im_select#ibus_set_im(im) abort
-  call s:Job.new([
-        \   'ibus',
-        \   'engine',
-        \   a:im
-        \ ],
-        \ {status, stdout, stderr -> []})
-endfunction
-
-function! im_select#fcitx_get_im() abort
-  return im_select#rstrip(system('fcitx-remote'))
-endfunction
-
-function! im_select#fcitx_set_im(im) abort
-  silent execute '!fcitx-remote -t ' . a:im
-endfunction
-
-function! im_select#im_select_get_im() abort
-  return im_select#rstrip(system(g:im_select_command), "\r\n")
-endfunction
-
-function! im_select#im_select_set_im(im) abort
-  silent execute '!' . g:im_select_command . ' ' . a:im
+function! im_select#get_and_set_prev_im() abort
+  return s:ImGetJob.new(g:im_select_get_im_cmd, g:ImSelectGetImCallback, 1)
 endfunction
 
 function! im_select#get_im() abort
-  return call(g:ImSelectGetFunc, [])
+  let j = s:ImGetJob.new(g:im_select_get_im_cmd, g:ImSelectGetImCallback, 0)
+  call j.wait()
+  return j.result
+endfunction
+
+function! im_select#focus_event_timer_handler(timer) abort
+  let s:focus_event_enabled = 1
 endfunction
 
 function! im_select#set_im(im) abort
-  call call(g:ImSelectSetFunc, [a:im])
+  " workaround for some set_im commands who steal the focus
+  if im_select#get_im() != a:im
+    let s:focus_event_enabled = 0
+    call timer_start(50, 'im_select#focus_event_timer_handler')
+    call s:ImSetJob.new(call(g:ImSelectSetImCmd, [a:im]))
+  endif
 endfunction
 
 function! im_select#on_insert_enter() abort
   if g:im_select_prev_im != ''
     call im_select#set_im(g:im_select_prev_im)
   else
-    let g:im_select_prev_im = im_select#get_im()
+    call im_select#get_and_set_prev_im()
   endif
 endfunction
 
 function! im_select#on_insert_leave() abort
-  let g:im_select_prev_im = im_select#get_im()
+  let j = im_select#get_and_set_prev_im()
+  call j.wait()
   call im_select#set_im(g:im_select_default)
 endfunction
 
 function! im_select#on_focus_gained() abort
-  if s:focus_autocmd_enabled
+  if s:focus_event_enabled
     if match(mode(), '^\(i\|R\|s\|S\|CTRL\-S\)') < 0
-      let g:im_select_prev_im = im_select#get_im()
+      let j = im_select#get_and_set_prev_im()
+      call j.wait()
       call im_select#set_im(g:im_select_default)
     endif
   endif
 endfunction
 
 function! im_select#on_focus_lost() abort
-  if s:focus_autocmd_enabled
+  if s:focus_event_enabled
     if match(mode(), '^\(i\|R\|s\|S\|CTRL\-S\)') < 0
       if g:im_select_prev_im != ''
         call im_select#set_im(g:im_select_prev_im)
       else
-        let g:im_select_prev_im = im_select#get_im()
+        call im_select#get_and_set_prev_im()
       endif
     endif
   endif

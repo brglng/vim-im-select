@@ -9,22 +9,44 @@ On macOS or Windows, [im-select](https://github.com/daipeihust/im-select) must b
 
 ## Options
 
-`g:ImSelectGetFunc` can be set to a function name or Funcref with the following prototype:
+### `g:im_select_get_im_cmd`
+
+This should be a list or a string of the command for getting the current IM key.
+
+e.g.
 
 ```vim
-function! ImGet()
-  ...
+let g:im_select_get_im_cmd = ['im-select']
+```
+
+### `g:ImSelectSetImCmd`
+
+This variable must be a Funcref who takes the key as argument and returns the whole
+command line.
+
+e.g.
+
+```vim
+let g:ImSelectSetImCmd = {key -> ['im-select', key]}
+```
+
+### `g:ImSelectGetImCallback`
+
+This variable must be a Funcref, which is called after the `get_im` command is exited,
+returning the current IM key.
+
+e.g.
+
+```vim
+function! GetImCallback(exit_code, stdout, stderr)
+  return im_select#rstrip(a:stdout, "\r\n")
 endfunction
 ```
 
-`g:ImSelectGetFunc` can be set to a function name or Funcref with the following prototype:
+### `g:im_select_default`
 
-```vim
-function! ImSet(key)
-  ...
-endfunction
-```
+This variable can be set to your own default IM key.
 
-`g:im_select_default` can be set to your own default IM key.
+### `g:im_select_command`
 
-`g:im_select_command` can be set to the `im-select` program path of your own.
+This variable can be set to the `im-select` program path of your own.

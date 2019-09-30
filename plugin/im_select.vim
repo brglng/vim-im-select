@@ -3,38 +3,56 @@ if exists('g:im_select_loaded') || &compatible
 endif
 let g:im_select_loaded = 1
 
+if !has('nvim') && has('win32') && has('gui_running')
+  " GVim already supports automatic IM switching
+  finish
+endif
+
 if !exists('*jobstart') && !exists('*job_start')
   finish
 endif
 
 " OS and IM detection
-if !exists('g:ImSelectGetFunc') || !exists('g:ImSelectSetFunc')
+if !exists('g:im_select_get_im_cmd') || !exists('g:ImSelectSetImCmd')
   let os = im_select#get_os()
   if os == 'Linux'
     if $GTK_IM_MODULE == 'fcitx' || $QT_IM_MODULE == 'fcitx'
-      let g:ImSelectGetFunc = function('im_select#fcitx_get_im')
-      let g:ImSelectSetFunc = function('im_select#fcitx_set_im')
+      let g:im_select_get_im_cmd = ['fcitx-remote']
+      let g:ImSelectSetImCmd = {key -> ['fcitx-remote', '-t', key]}
       if !exists('g:im_select_default')
         let g:im_select_default = '1'
       endif
     elseif match($XDG_CURRENT_DESKTOP, '\cgnome')
       if $GTK_IM_MODULE == 'ibus'
-        let g:ImSelectGetFunc = function('im_select#gnome_shell_get_im')
-        let g:ImSelectSetFunc = function('im_select#gnome_shell_set_im')
+        let g:im_select_get_im_cmd = [
+              \ 'gdbus', 'call', '--session',
+              \ '--dest', 'org.gnome.Shell',
+              \ '--object-path', '/org/gnome/Shell',
+              \ '--method', 'org.gnome.Shell.Eval',
+              \ 'imports.ui.status.keyboard.getInputSourceManager()._mruSources[0].index'
+              \ ]
+        let g:ImSelectSetImCmd = {key -> [
+              \ 'gdbus', 'call', '--session',
+              \ '--dest', 'org.gnome.Shell',
+              \ '--object-path', '/org/gnome/Shell',
+              \ '--method', 'org.gnome.Shell.Eval',
+              \ 'imports.ui.status.keyboard.getInputSourceManager().inputSources[' . key . '].activate()'
+              \ ]}
+        let g:ImSelectGetImCallback = function('im_select#gnome_shell_get_im_callback')
         if !exists('g:im_select_default')
           let g:im_select_default = '0'
         endif
       endif
     else
       if $GTK_IM_MODULE == 'ibus' || $QT_IM_MODULE == 'ibus'
-        let g:ImSelectGetFunc = function('im_select#ibus_get_im')
-        let g:ImSelectSetFunc = function('im_select#ibus_set_im')
+        let g:im_select_get_im_cmd = ['ibus', 'engine']
+        let g:ImSelectSetImCmd = {key -> ['ibus', 'engine', key]}
         if !exists('g:im_select_default')
           let g:im_select_default = 'xkb:us::eng'
         endif
       elseif $GTK_IM_MODULE == 'fcitx' || $QT_IM_MODULE == 'fcitx'
-        let g:ImSelectGetFunc = function('im_select#fcitx_get_im')
-        let g:ImSelectSetFunc = function('im_select#fcitx_set_im')
+        let g:im_select_get_im_cmd = ['fcitx-remote']
+        let g:ImSelectSetImCmd = {key -> ['fcitx-remote', '-t', key]}
         if !exists('g:im_select_default')
           let g:im_select_default = '1'
         endif
@@ -64,21 +82,26 @@ if !exists('g:ImSelectGetFunc') || !exists('g:ImSelectSetFunc')
       let g:im_select_default = 'com.apple.keylayout.ABC'
     endif
 
-    let g:ImSelectGetFunc = function('im_select#im_select_get_im')
-    let g:ImSelectSetFunc = function('im_select#im_select_set_im')
+    let g:im_select_get_im_cmd = [g:im_select_command]
+    let g:ImSelectSetImCmd = {key -> [g:im_select_command, key]}
   endif
 endif
 
-if !exists('g:ImSelectGetFunc') || !exists('g:ImSelectSetFunc')
+if !exists('g:im_select_get_im_cmd') || !exists('g:ImSelectSetImCmd')
   finish
+endif
+
+if !exists('g:ImSelectGetImCallback')
+  let g:ImSelectGetImCallback = function('im_select#default_get_im_callback')
 endif
 
 let g:im_select_prev_im = ''
 
 augroup im_select
+  autocmd!
   autocmd InsertEnter * call im_select#on_insert_enter()
   autocmd InsertLeave * call im_select#on_insert_leave()
   autocmd FocusGained * call im_select#on_focus_gained()
   autocmd FocusLost * call im_select#on_focus_lost()
   autocmd VimLeavePre * call im_select#on_vim_leave_pre()
-augroup end
+augroup END
