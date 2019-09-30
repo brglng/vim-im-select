@@ -11,7 +11,7 @@ On macOS or Windows, [im-select](https://github.com/daipeihust/im-select) must b
 
 ### `g:im_select_get_im_cmd`
 
-This should be a list or a string of the command for getting the current IM key.
+This variable can be set to a list or a string of the command for getting the current IM key.
 
 e.g.
 
