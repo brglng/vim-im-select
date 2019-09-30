@@ -41,6 +41,7 @@ e.g.
 function! GetImCallback(exit_code, stdout, stderr)
   return im_select#rstrip(a:stdout, "\r\n")
 endfunction
+let g:ImSelectGetImCallback = function('GetImCallback')
 ```
 
 ### `g:im_select_default`
