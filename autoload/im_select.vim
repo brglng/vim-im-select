@@ -63,7 +63,7 @@ if has('nvim')
   endfunction
 
   function s:ImGetJob.on_exit(job_id, data, event) abort
-    let self.result = call(self.callback, [a:data, self.stdout, self.stderr])
+    let self.result = call(self.callback, [a:data, im_select#rstrip(self.stdout, " \r\n"), im_select#rstrip(self.stderr, " \r\n")])
     if self.set_prev_im
       let g:im_select_prev_im = self.result
     endif
@@ -96,19 +96,15 @@ else
   let s:ImGetJob = {}
 
   function s:ImGetJob.out_cb(channel, msg) abort
-    while ch_status(a:channel, {'part': 'out'}) == 'buffered'
-      let self.stdout = self.stdout . ch_readraw(a:channel)
-    endwhile
+    let self.stdout = self.stdout . a:msg
   endfunction
 
   function s:ImGetJob.err_cb(channel, msg) abort
-    while ch_status(a:channel, {'part': 'err'}) == 'buffered'
-      let self.stderr = self.stderr . ch_readraw(a:channel)
-    endwhile
+    let self.stderr = self.stderr . a:msg
   endfunction
 
   function s:ImGetJob.exit_cb(job, status) abort
-    let self.result = call(self.callback, [a:status, self.stdout, self.stderr])
+    let self.result = call(self.callback, [a:status, im_select#rstrip(self.stdout, " \r\n"), im_select#rstrip(self.stderr, " \r\n")])
     if self.set_prev_im
       let g:im_select_prev_im = self.result
     endif
@@ -146,7 +142,7 @@ function! im_select#gnome_shell_get_im_callback(status, stdout, stderr) abort
 endfunction
 
 function! im_select#default_get_im_callback(status, stdout, stderr) abort
-  return im_select#rstrip(a:stdout)
+  return a:stdout
 endfunction
 
 function! im_select#get_and_set_prev_im() abort
@@ -165,28 +161,42 @@ endfunction
 
 function! im_select#set_im(im) abort
   " workaround for some set_im commands who steal the focus
-  if im_select#get_im() != a:im
+  let cur_im = im_select#get_im()
+  if cur_im != a:im
     let s:focus_event_enabled = 0
-    call timer_start(50, 'im_select#focus_event_timer_handler')
+    call timer_start(40, 'im_select#focus_event_timer_handler')
     call s:ImSetJob.new(call(g:ImSelectSetImCmd, [a:im]))
   endif
 endfunction
 
+let s:insert_enter_count = 0
 function! im_select#on_insert_enter() abort
-  if g:im_select_prev_im != ''
-    call im_select#set_im(g:im_select_prev_im)
-  else
-    call im_select#get_and_set_prev_im()
+  let s:insert_enter_count += 1
+  echomsg 'InsertEnter: ' . s:insert_enter_count
+  if s:focus_event_enabled
+    if g:im_select_prev_im != ''
+      call im_select#set_im(g:im_select_prev_im)
+    else
+      call im_select#get_and_set_prev_im()
+    endif
   endif
 endfunction
 
+let s:insert_leave_count = 0
 function! im_select#on_insert_leave() abort
-  let j = im_select#get_and_set_prev_im()
-  call j.wait()
-  call im_select#set_im(g:im_select_default)
+  let s:insert_leave_count += 1
+  echomsg 'InsertLeave: ' . s:insert_leave_count
+  if s:focus_event_enabled
+    let j = im_select#get_and_set_prev_im()
+    call j.wait()
+    call im_select#set_im(g:im_select_default)
+  endif
 endfunction
 
+let s:focus_gained_count = 0
 function! im_select#on_focus_gained() abort
+  let s:focus_gained_count += 1
+  echomsg 'FocusGained: ' . s:focus_gained_count
   if s:focus_event_enabled
     if match(mode(), '^\(i\|R\|s\|S\|CTRL\-S\)') < 0
       let j = im_select#get_and_set_prev_im()
@@ -196,7 +206,10 @@ function! im_select#on_focus_gained() abort
   endif
 endfunction
 
+let s:focus_lost_count = 0
 function! im_select#on_focus_lost() abort
+  let s:focus_lost_count += 1
+  echomsg 'FocusLost: ' . s:focus_lost_count
   if s:focus_event_enabled
     if match(mode(), '^\(i\|R\|s\|S\|CTRL\-S\)') < 0
       if g:im_select_prev_im != ''

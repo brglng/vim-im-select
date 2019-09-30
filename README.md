@@ -39,7 +39,7 @@ e.g.
 
 ```vim
 function! GetImCallback(exit_code, stdout, stderr)
-  return im_select#rstrip(a:stdout, "\r\n")
+  return a:stdout
 endfunction
 let g:ImSelectGetImCallback = function('GetImCallback')
 ```
