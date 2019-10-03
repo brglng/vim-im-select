@@ -1,15 +1,24 @@
-if exists('g:im_select_loaded') || &compatible
+if exists('g:im_select_loaded') && g:im_select_loaded
   finish
 endif
 let g:im_select_loaded = 1
+
+let s:save_cpo = &cpo
+set cpo&vim
 
 if !has('nvim') && has('win32') && has('gui_running')
   " GVim already supports automatic IM switching
   finish
 endif
 
-if !exists('*jobstart') && !exists('*job_start')
-  finish
+if has('nvim')
+  if !exists('*jobstart')
+    finish
+  endif
+else
+  if !has('channel') || !has('job')
+    finish
+  endif
 endif
 
 " OS and IM detection
@@ -105,3 +114,6 @@ augroup im_select
   autocmd FocusLost * call im_select#on_focus_lost()
   autocmd VimLeavePre * call im_select#on_vim_leave_pre()
 augroup END
+
+let &cpo = s:save_cpo
+unlet s:save_cpo
