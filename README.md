@@ -38,7 +38,7 @@ returning the current IM key.
 e.g.
 
 ```vim
-function! GetImCallback(exit_code, stdout, stderr)
+function! GetImCallback(exit_code, stdout, stderr) abort
   return a:stdout
 endfunction
 let g:ImSelectGetImCallback = function('GetImCallback')
