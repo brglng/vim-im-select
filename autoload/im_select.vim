@@ -167,6 +167,7 @@ function! im_select#set_im(im) abort
     call timer_start(40, 'im_select#focus_event_timer_handler')
     return s:ImSetJob.new(call(g:ImSelectSetImCmd, [a:im]))
   endif
+  return v:null
 endfunction
 
 let s:insert_enter_count = 0
@@ -225,6 +226,9 @@ function! im_select#on_vim_leave_pre() abort
   if match(mode(), '^\(i\|R\|s\|S\|CTRL\-S\)') < 0
     if g:im_select_prev_im != ''
       let job = im_select#set_im(g:im_select_prev_im)
+      if job isnot v:null
+        call job.wait()
+      endif
     endif
   endif
 endfunction
