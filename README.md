@@ -51,3 +51,8 @@ This variable can be set to your own default IM key.
 ### `g:im_select_command`
 
 This variable can be set to the `im-select` program path of your own (only useful on macOS and Windows).
+
+### `g:im_select_enable_for_win32_gvim`
+
+The plugin is disabled on GVim for Windows, as GVim fow Windows already support IM alto switching.
+Set this variable to 1 if you want to enable anyway.

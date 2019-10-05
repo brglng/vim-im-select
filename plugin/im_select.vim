@@ -1,15 +1,10 @@
-if exists('g:im_select_loaded') && g:im_select_loaded
+if (exists('g:im_select_loaded') && g:im_select_loaded) || &compatible
   finish
 endif
 let g:im_select_loaded = 1
 
 let s:save_cpo = &cpo
 set cpo&vim
-
-if !has('nvim') && has('win32') && has('gui_running')
-  " GVim already supports automatic IM switching
-  finish
-endif
 
 if has('nvim')
   if !exists('*jobstart')
@@ -19,6 +14,14 @@ else
   if !has('channel') || !has('job')
     finish
   endif
+endif
+
+if !exists('g:im_select_enable_for_win32_gvim')
+  let g:im_select_enable_for_win32_gvim = 0
+endif
+
+if !has('nvim') && has('win32') && has('gui_running') && !g:im_select_enable_for_win32_gvim
+  finish
 endif
 
 " OS and IM detection
