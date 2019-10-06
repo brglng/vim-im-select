@@ -45,6 +45,10 @@ endfunction
 if has('nvim')
   let s:ImSetJob = {}
 
+  function s:ImSetJob.wait() abort
+    call jobwait([self.id])
+  endfunction
+
   function s:ImSetJob.new(cmd) abort
     let object = copy(s:ImSetJob)
     let object.cmd = a:cmd
@@ -86,10 +90,23 @@ if has('nvim')
 else
   let s:ImSetJob = {}
 
+  function s:ImSetJob.exit_cb(job, status) abort
+    let self.is_running = 0
+  endfunction
+
+  function s:ImSetJob.wait() abort
+    while self.is_running
+      sleep 10m
+    endwhile
+  endfunction
+
   function s:ImSetJob.new(cmd) abort
     let object = copy(s:ImSetJob)
     let object.cmd = a:cmd
-    let object.id = job_start(object.cmd)
+    let object.id = job_start(object.cmd, {
+          \ 'exit_cb': object.exit_cb
+          \ })
+    let object.is_running = 1
     return object
   endfunction
 
