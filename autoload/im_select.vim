@@ -23,7 +23,7 @@ function! im_select#get_os() abort
   if (has('win32') || has('win64')) && !has('win32unix') && !has('unix')
     return 'Windows'
   elseif executable('uname')
-    let uname_s = im_select#rstrip(system('uname -s'), "\r\n")
+    let uname_s = im_select#rstrip(system('uname -s'), " \r\n")
     if uname_s ==# 'Linux' && match(system('uname -r'), 'Microsoft') >= 0
       return 'Windows'
     elseif uname_s ==# 'Linux'

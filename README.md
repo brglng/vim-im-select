@@ -54,5 +54,5 @@ This variable can be set to the `im-select` program path of your own (only usefu
 
 ### `g:im_select_enable_for_win32_gvim`
 
-The plugin is disabled on GVim for Windows, as GVim fow Windows already support IM alto switching.
+The plugin is disabled on GVim for Windows, as GVim for Windows already support IM auto-switching.
 Set this variable to 1 if you want to enable anyway.
