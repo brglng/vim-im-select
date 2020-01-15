@@ -34,7 +34,7 @@ if !exists('g:im_select_get_im_cmd') || !exists('g:ImSelectSetImCmd')
       if !exists('g:im_select_default')
         let g:im_select_default = '1'
       endif
-    elseif match($XDG_CURRENT_DESKTOP, '\cgnome')
+    elseif match($XDG_CURRENT_DESKTOP, '\cgnome') >= 0
       if $GTK_IM_MODULE == 'ibus'
         let g:im_select_get_im_cmd = [
               \ 'gdbus', 'call', '--session',
