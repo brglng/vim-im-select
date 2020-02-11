@@ -12,7 +12,9 @@ Basically, this plugin does these things:
 - Switch back to your previous IM before exiting Vim if you are in normal
   mode, or do nothing if not
 
-## Usage
+## Requirements
+
+Neovim or Vim with `+job` is required.
 
 This plugin works out of the box on Linux with iBus or Fcitx.
 
