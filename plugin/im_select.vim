@@ -26,15 +26,11 @@ endif
 
 " OS and IM detection
 if !exists('g:im_select_get_im_cmd') || !exists('g:ImSelectSetImCmd')
-    if has('win32') || has('win64') || has('win32unix') || has('wsl') ||
-      \ has('mac') || has('macunix') || has('osx') || has('osxdarwin') || $PATH =~ '/mnt/c/WINDOWS'
+    let is_windows = has('win32') || has('win64') || has('win32unix') || has('wsl') || $PATH =~ '/mnt/c/WINDOWS'
+    let is_mac = has('mac') || has('macunix') || has('osx') || has('osxdarwin')
+    if is_windows || is_mac
         if !exists('g:im_select_command')
-            if os == 'macOS'
-                let cmd = im_select#rstrip(system('which im-select'), "\r\n")
-            else
-                let cmd = im_select#rstrip(system('where.exe im-select.exe'), "\r\n")
-            endif
-
+            let cmd = exepath('im-select')
             if cmd == ''
                 echohl ErrorMsg | echomsg 'im-select is not found on your system. Please refer to https://github.com/daipeihust/im-select' | echohl None
                 finish
@@ -44,7 +40,7 @@ if !exists('g:im_select_get_im_cmd') || !exists('g:ImSelectSetImCmd')
         endif
 
         if !exists('g:im_select_default')
-            if os == 'Windows'
+            if is_windows
                 echohl ErrorMsg | echomsg "Please set the default IM manually on Windows." | echohl None
                 finish
             endif
