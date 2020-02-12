@@ -78,11 +78,10 @@ useful on macOS and Windows).
 
 The timeout during which events are not responded, in milliseconds.
 
-Some IM switching commands steals focus, for example, the `gdbus` program on
-GNOME desktop (which is really unfortunate). This will trigger `FocusLost` and
-`FocusGained` events, which causes problems. This option setups the timeout
-after the IM is switched. During the timeout, events are not responded. The
-default value is 40.
+Some IM switching commands steals focus, e.g., the `gdbus` program on GNOME
+desktop. This will trigger `FocusLost` and `FocusGained` events, which causes
+problems. This option setups the timeout after the IM is switched. During the
+timeout, events are not responded. The default value is 50.
 
 ### `g:im_select_enable_for_win32_gvim`
 

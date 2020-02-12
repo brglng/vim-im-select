@@ -104,7 +104,7 @@ if !exists('g:ImSelectGetImCallback')
 endif
 
 if !exists('g:im_select_switch_timeout')
-    let g:im_select_switch_timeout = 40
+    let g:im_select_switch_timeout = 50
 endif
 
 let g:im_select_prev_im = ''
