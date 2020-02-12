@@ -139,29 +139,31 @@ function! im_select#default_get_im_callback(status, stdout, stderr) abort
     return a:stdout
 endfunction
 
-function! im_select#get_and_set_prev_im() abort
-    return s:ImGetJob.new(g:im_select_get_im_cmd, g:ImSelectGetImCallback, 1)
+function! im_select#get_and_set_prev_im(callback) abort
+    return s:ImGetJob.new(g:im_select_get_im_cmd, a:callback, 1)
 endfunction
 
-function! im_select#get_im() abort
-    let j = s:ImGetJob.new(g:im_select_get_im_cmd, g:ImSelectGetImCallback, 0)
-    call j.wait()
-    return j.result
+function! im_select#get_im(callback) abort
+    let j = s:ImGetJob.new(g:im_select_get_im_cmd, a:callback, 0)
 endfunction
 
 function! im_select#focus_event_timer_handler(timer) abort
     let s:focus_event_enabled = 1
 endfunction
 
-function! im_select#set_im(im) abort
-    " workaround for some set_im commands who steal the focus
-    let cur_im = im_select#get_im()
+function! im_select#set_im_get_im_callback(code, stdout, stderr) abort
+    let cur_im = call(g:ImSelectGetImCallback, [a:code, a:stdout, a:stderr])
     if cur_im != a:im
+        " workaround for some set_im commands who steal the focus
         let s:focus_event_enabled = 0
         call timer_start(40, 'im_select#focus_event_timer_handler')
-        return s:ImSetJob.new(call(g:ImSelectSetImCmd, [a:im]))
+        let j = s:ImSetJob.new(call(g:ImSelectSetImCmd, [a:im]))
     endif
-    return v:null
+    return cur_im
+endfunction
+
+function! im_select#set_im(im) abort
+    call im_select#get_im('im_select#set_im_get_im_callback')
 endfunction
 
 let s:insert_enter_count = 0
@@ -172,45 +174,53 @@ function! im_select#on_insert_enter() abort
         if g:im_select_prev_im != ''
             call im_select#set_im(g:im_select_prev_im)
         else
-            call im_select#get_and_set_prev_im()
+            call im_select#get_and_set_prev_im(g:ImSelectGetImCallback)
         endif
     endif
 endfunction
 
-let s:insert_leave_count = 0
+function! im_select#on_insert_leave_get_im_callback(code, stdout, stderr) abort
+    let cur_im = call(g:ImSelectGetImCallback, [a:code, a:stdout, a:stderr])
+    call im_select#set_im(g:im_select_default)
+    return cur_im
+endfunction
+
+" let s:insert_leave_count = 0
 function! im_select#on_insert_leave() abort
-    let s:insert_leave_count += 1
+    " let s:insert_leave_count += 1
     " echomsg 'InsertLeave: ' . s:insert_leave_count . ', mode: ' . mode() . ', event: ' . string(v:event)
     if s:focus_event_enabled
-        let j = im_select#get_and_set_prev_im()
-        call j.wait()
-        call im_select#set_im(g:im_select_default)
+        let j = im_select#get_and_set_prev_im('im_select#on_insert_leave_get_im_callback')
     endif
 endfunction
 
-let s:focus_gained_count = 0
+function! im_select#on_focus_gained_get_im_callback(code, stdout, stderr) abort
+    let cur_im = call(g:ImSelectGetImCallback, [a:code, a:stdout, a:stderr])
+    call im_select#set_im(g:im_select_default)
+    return cur_im
+endfunction
+
+" let s:focus_gained_count = 0
 function! im_select#on_focus_gained() abort
-    let s:focus_gained_count += 1
+    " let s:focus_gained_count += 1
     " echomsg 'FocusGained: ' . s:focus_gained_count
     if s:focus_event_enabled
         if match(mode(), '^\(i\|R\|s\|S\|CTRL\-S\)') < 0
-            let j = im_select#get_and_set_prev_im()
-            call j.wait()
-            call im_select#set_im(g:im_select_default)
+            let j = im_select#get_and_set_prev_im('im_select#on_focus_gained_get_im_callback')
         endif
     endif
 endfunction
 
-let s:focus_lost_count = 0
+" let s:focus_lost_count = 0
 function! im_select#on_focus_lost() abort
-    let s:focus_lost_count += 1
+    " let s:focus_lost_count += 1
     " echomsg 'FocusLost: ' . s:focus_lost_count
     if s:focus_event_enabled
         if match(mode(), '^\(i\|R\|s\|S\|CTRL\-S\)') < 0
             if g:im_select_prev_im != ''
                 call im_select#set_im(g:im_select_prev_im)
             else
-                call im_select#get_and_set_prev_im()
+                call im_select#get_and_set_prev_im(g:ImSelectGetImCallback)
             endif
         endif
     endif
