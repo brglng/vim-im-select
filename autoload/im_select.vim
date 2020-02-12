@@ -151,7 +151,7 @@ function! im_select#focus_event_timer_handler(timer) abort
     let s:focus_event_enabled = 1
 endfunction
 
-function! im_select#set_im_get_im_callback(code, stdout, stderr) abort
+function! im_select#set_im_get_im_callback(im, code, stdout, stderr) abort
     let cur_im = call(g:ImSelectGetImCallback, [a:code, a:stdout, a:stderr])
     if cur_im != a:im
         " workaround for some set_im commands who steal the focus
@@ -163,7 +163,7 @@ function! im_select#set_im_get_im_callback(code, stdout, stderr) abort
 endfunction
 
 function! im_select#set_im(im) abort
-    call im_select#get_im('im_select#set_im_get_im_callback')
+    call im_select#get_im(function('im_select#set_im_get_im_callback', [a:im]))
 endfunction
 
 let s:insert_enter_count = 0
