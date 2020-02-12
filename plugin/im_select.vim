@@ -103,6 +103,10 @@ if !exists('g:ImSelectGetImCallback')
     let g:ImSelectGetImCallback = function('im_select#default_get_im_callback')
 endif
 
+if !exists('g:im_select_switch_timeout')
+    let g:im_select_switch_timeout = 40
+endif
+
 let g:im_select_prev_im = ''
 
 augroup im_select

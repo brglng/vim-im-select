@@ -156,7 +156,7 @@ function! im_select#set_im_get_im_callback(im, code, stdout, stderr) abort
     if cur_im != a:im
         " workaround for some set_im commands who steal the focus
         let s:focus_event_enabled = 0
-        call timer_start(40, 'im_select#focus_event_timer_handler')
+        call timer_start(g:im_select_switch_timeout, 'im_select#focus_event_timer_handler')
         let j = s:ImSetJob.new(call(g:ImSelectSetImCmd, [a:im]))
     endif
     return cur_im

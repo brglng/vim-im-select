@@ -74,6 +74,16 @@ This variable can be set to your own default IM key.
 This variable can be set to the `im-select` program path of your own (only
 useful on macOS and Windows).
 
+### `g:im_select_switch_timeout`
+
+The timeout during which events are not responded, in milliseconds.
+
+Some IM switching commands steals focus, for example, the `gdbus` program on
+GNOME desktop (which is really unfortunate). This will trigger `FocusLost` and
+`FocusGained` events, which causes problems. This option setups the timeout
+after the IM is switched. During the timeout, events are not responded. The
+default value is 40.
+
 ### `g:im_select_enable_for_win32_gvim`
 
 The plugin is disabled on GVim for Windows, as GVim for Windows already
