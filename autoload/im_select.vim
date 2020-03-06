@@ -229,7 +229,7 @@ endfunction
 function! im_select#on_vim_leave_pre() abort
     if match(mode(), '^\(i\|R\|s\|S\|CTRL\-S\)') < 0
         if g:im_select_prev_im != ''
-            execute 'silent !' . join(call(g:ImSelectSetImCmd, [g:im_select_prev_im]), ' ')
+            execute 'silent! !' . join(call(g:ImSelectSetImCmd, [g:im_select_prev_im]), ' ')
         endif
     endif
 endfunction
