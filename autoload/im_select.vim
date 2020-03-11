@@ -248,6 +248,8 @@ function! im_select#on_vim_leave_pre() abort
                 execute 'silent! !' . join(call(g:ImSelectSetImCmd, [g:im_select_prev_im]), ' ')
             endif
         endif
+    else
+        execute 'silent! !' . join(call(g:ImSelectSetImCmd, [g:im_select_default]), ' ')
     endif
 endfunction
 
