@@ -9,8 +9,10 @@ Basically, this plugin does these things:
   normal mode, or do nothing if not
 - Switch back to your previous IM on `FocusLost` if you are in normal mode, or
   do nothing if not
-- Switch back to your previous IM before exiting Vim if you are in normal
-  mode, or do nothing if not
+- If you are using a GUI (e.g., GVim), switch back to your previous IM before
+  exiting Vim if you are in normal mode, or do nothing if you are in insert
+  mode. If you are under a terminal, switch to the default IM of your choice
+  before exiting Vim.
 
 ## Requirements
 
