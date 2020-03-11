@@ -1,5 +1,20 @@
 let s:focus_event_enabled = 1
 
+if has('nvim')
+    if exists('g:GuiLoaded')
+        if g:GuiLoaded != 0
+            let s:gui = 1
+        endif
+    elseif exists('*nvim_list_uis') && len(nvim_list_uis()) > 0
+        let uis = nvim_list_uis()[0]
+        let s:gui = get(uis, 'ext_termcolors', 0)? 0 : 1
+    elseif exists("+termguicolors") && (&termguicolors) != 0
+        let s:gui = 1
+    endif
+else
+    let s:gui = has('gui_running')
+endif
+
 function! im_select#rstrip(str, chars) abort
     if strlen(a:str) > 0 && strlen(a:chars) > 0
         let i = strlen(a:str) - 1
@@ -227,9 +242,11 @@ function! im_select#on_focus_lost() abort
 endfunction
 
 function! im_select#on_vim_leave_pre() abort
-    if match(mode(), '^\(i\|R\|s\|S\|CTRL\-S\)') < 0
-        if g:im_select_prev_im != ''
-            execute 'silent! !' . join(call(g:ImSelectSetImCmd, [g:im_select_prev_im]), ' ')
+    if s:gui
+        if match(mode(), '^\(i\|R\|s\|S\|CTRL\-S\)') < 0
+            if g:im_select_prev_im != ''
+                execute 'silent! !' . join(call(g:ImSelectSetImCmd, [g:im_select_prev_im]), ' ')
+            endif
         endif
     endif
 endfunction
