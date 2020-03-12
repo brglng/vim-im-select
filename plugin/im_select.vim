@@ -52,7 +52,7 @@ if !exists('g:im_select_get_im_cmd') || !exists('g:ImSelectSetImCmd')
     elseif has('unix')
         if $GTK_IM_MODULE == 'fcitx' || $QT_IM_MODULE == 'fcitx'
             let g:im_select_get_im_cmd = ['fcitx-remote']
-            let g:ImSelectSetImCmd = {key -> ['fcitx-remote', '-t', key]}
+            let g:ImSelectSetImCmd = {key -> ['fcitx-remote', key]}
             if !exists('g:im_select_default')
                 let g:im_select_default = '1'
             endif
@@ -86,7 +86,7 @@ if !exists('g:im_select_get_im_cmd') || !exists('g:ImSelectSetImCmd')
                 endif
             elseif $GTK_IM_MODULE == 'fcitx' || $QT_IM_MODULE == 'fcitx'
                 let g:im_select_get_im_cmd = ['fcitx-remote']
-                let g:ImSelectSetImCmd = {key -> ['fcitx-remote', '-t', key]}
+                let g:ImSelectSetImCmd = {key -> ['fcitx-remote', key]}
                 if !exists('g:im_select_default')
                     let g:im_select_default = '1'
                 endif
