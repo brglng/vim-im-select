@@ -27,7 +27,9 @@ be installed.
 
 [tmux-plugins/vim-tmux-focus-events](https://github.com/tmux-plugins/vim-tmux-focus-events)
 is recommended if you are using Tmux. This plugin provides `FocusGained` and
-`FocusLost` events for Vim under Tmux.
+`FocusLost` events for (Neo)Vim under Tmux. (NOTE: It is reported that this
+plugin does not work well with Vim/Vim cannot recognize the terminal code from
+this plugin, however it works well with Neovim.)
 
 ## Options
 
