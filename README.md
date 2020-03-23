@@ -31,6 +31,16 @@ is recommended if you are using Tmux. This plugin provides `FocusGained` and
 plugin does not work well with Vim/Vim cannot recognize the terminal code from
 this plugin, however it works well with Neovim.)
 
+## Commands
+
+### `ImSelectEnable`
+
+Enable this plugin if not enabled.
+
+### `ImSelectDisable`
+
+Disable this plugin.
+
 ## Options
 
 ### `g:im_select_get_im_cmd`
