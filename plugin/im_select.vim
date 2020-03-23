@@ -16,9 +16,7 @@ else
     endif
 endif
 
-if !exists('g:im_select_enable_for_win32_gvim')
-    let g:im_select_enable_for_win32_gvim = 0
-endif
+let g:im_select_enable_for_win32_gvim = get(g:, 'im_select_enable_for_win32_gvim', 0)
 
 if !has('nvim') && has('win32') && has('gui_running') && !g:im_select_enable_for_win32_gvim
     finish
@@ -109,24 +107,28 @@ if !exists('g:im_select_get_im_cmd') || !exists('g:ImSelectSetImCmd')
     finish
 endif
 
-if !exists('g:ImSelectGetImCallback')
-    let g:ImSelectGetImCallback = function('im_select#default_get_im_callback')
-endif
-
-if !exists('g:im_select_switch_timeout')
-    let g:im_select_switch_timeout = 50
-endif
+let g:ImSelectGetImCallback = get(g:, 'ImSelectGetImCallback', function('im_select#default_get_im_callback'))
+let g:im_select_switch_timeout = get(g:, 'im_select_switch_timeout', 50)
 
 let g:im_select_prev_im = ''
 
-augroup im_select
-    autocmd!
-    autocmd InsertEnter * call im_select#on_insert_enter()
-    autocmd InsertLeave * call im_select#on_insert_leave()
-    autocmd FocusGained * call im_select#on_focus_gained()
-    autocmd FocusLost * call im_select#on_focus_lost()
-    autocmd VimLeavePre * call im_select#on_vim_leave_pre()
-augroup END
+function! im_select#enable() abort
+    augroup im_select
+        autocmd!
+        autocmd InsertEnter * call im_select#on_insert_enter()
+        autocmd InsertLeave * call im_select#on_insert_leave()
+        autocmd FocusGained * call im_select#on_focus_gained()
+        autocmd FocusLost * call im_select#on_focus_lost()
+        autocmd VimLeavePre * call im_select#on_vim_leave_pre()
+    augroup END
+endfunction
+
+function! im_select#disable() abort
+    autocmd! im_select
+endfunction
+
+command! -nargs=0 ImSelectEnable call im_select#enable()
+command! -nargs=0 ImSelectDisable call im_select#disable()
 
 let &cpo = s:save_cpo
 unlet s:save_cpo
