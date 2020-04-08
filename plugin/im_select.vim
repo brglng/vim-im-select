@@ -24,7 +24,7 @@ endif
 
 " OS and IM detection
 if !exists('g:im_select_get_im_cmd') || !exists('g:ImSelectSetImCmd')
-    let is_windows = has('win32') || has('win64') || has('win32unix') || has('wsl') || $PATH =~ '/mnt/c/WINDOWS'
+    let is_windows = has('win32') || has('win64') || has('win32unix') || has('wsl') || stridx(tolower(system('uname -r')), 'microsoft') > -1 || $PATH =~ '/mnt/c/WINDOWS'
     let is_mac = has('mac') || has('macunix') || has('osx') || has('osxdarwin')
     if is_windows || is_mac
         if !exists('g:im_select_command')
