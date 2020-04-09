@@ -242,15 +242,15 @@ function! im_select#on_focus_lost() abort
 endfunction
 
 function! im_select#on_vim_leave_pre() abort
-    if s:gui
-        if match(mode(), '^\(i\|R\|s\|S\|CTRL\-S\)') < 0
-            if g:im_select_prev_im != ''
-                execute 'silent! !' . join(call(g:ImSelectSetImCmd, [g:im_select_prev_im]), ' ')
-            endif
-        endif
-    else
-        execute 'silent! !' . join(call(g:ImSelectSetImCmd, [g:im_select_default]), ' ')
-    endif
+    " if s:gui
+    "     if match(mode(), '^\(i\|R\|s\|S\|CTRL\-S\)') < 0
+    "         if g:im_select_prev_im != ''
+    "             execute 'silent! !' . join(call(g:ImSelectSetImCmd, [g:im_select_prev_im]), ' ')
+    "         endif
+    "     endif
+    " else
+    "     execute 'silent! !' . join(call(g:ImSelectSetImCmd, [g:im_select_default]), ' ')
+    " endif
 endfunction
 
 " vim: ts=8 sts=4 sw=4 et
