@@ -130,6 +130,8 @@ endfunction
 command! -nargs=0 ImSelectEnable call im_select#enable()
 command! -nargs=0 ImSelectDisable call im_select#disable()
 
+call im_select#enable()
+
 let &cpo = s:save_cpo
 unlet s:save_cpo
 
