@@ -50,12 +50,17 @@ if !exists('g:im_select_get_im_cmd') || !exists('g:ImSelectSetImCmd')
     elseif has('unix')
         if $GTK_IM_MODULE == 'fcitx' || $QT_IM_MODULE == 'fcitx'
             let g:im_select_get_im_cmd = ['fcitx-remote']
-            let g:ImSelectSetImCmd = {
-              \ key ->
-              \ key == 1 ? ['fcitx-remote', '-c'] :
-              \ key == 2 ? ['fcitx-remote', '-o'] :
-              \ execute("throw 'invalid im key'")
-              \ }
+            function! g:ImSelectSetImCmd(key)
+                if a:key == 1
+                    echomsg 'key: ' . a:key . ', call fcitx-remote -c'
+                    return ['fcitx-remote', '-c']
+                elseif a:key == 2
+                    echomsg 'key: ' . a:key . ', call fcitx-remote -o'
+                    return ['fcitx-remote', '-o']
+                else
+                    throw 'invalid im key'
+                endif
+            endfunction
             if !exists('g:im_select_default')
                 let g:im_select_default = '1'
             endif
@@ -88,13 +93,17 @@ if !exists('g:im_select_get_im_cmd') || !exists('g:ImSelectSetImCmd')
                     let g:im_select_default = 'xkb:us::eng'
                 endif
             elseif $GTK_IM_MODULE == 'fcitx' || $QT_IM_MODULE == 'fcitx'
-                let g:im_select_get_im_cmd = ['fcitx-remote']
-                let g:ImSelectSetImCmd = {
-                \ key ->
-                \ key == 1 ? ['fcitx-remote', '-c'] :
-                \ key == 2 ? ['fcitx-remote', '-o'] :
-                \ execute("throw 'invalid im key'")
-                \ }
+                function! g:ImSelectSetImCmd(key)
+                    if a:key == 1
+                        echomsg 'key: ' . a:key . ', call fcitx-remote -c'
+                        return ['fcitx-remote', '-c']
+                    elseif a:key == 2
+                        echomsg 'key: ' . a:key . ', call fcitx-remote -o'
+                        return ['fcitx-remote', '-o']
+                    else
+                        throw 'invalid im key'
+                    endif
+                endfunction
                 if !exists('g:im_select_default')
                     let g:im_select_default = '1'
                 endif
