@@ -109,6 +109,7 @@ endif
 
 let g:ImSelectGetImCallback = get(g:, 'ImSelectGetImCallback', function('im_select#default_get_im_callback'))
 let g:im_select_switch_timeout = get(g:, 'im_select_switch_timeout', 50)
+let g:im_select_enable_focus_events = get(g:, 'im_select_enable_focus_events', 0)
 
 let g:im_select_prev_im = ''
 
@@ -117,8 +118,10 @@ function! im_select#enable() abort
         autocmd!
         autocmd InsertEnter * call im_select#on_insert_enter()
         autocmd InsertLeave * call im_select#on_insert_leave()
-        autocmd FocusGained * call im_select#on_focus_gained()
-        autocmd FocusLost * call im_select#on_focus_lost()
+        if g:im_select_enable_focus_events
+            autocmd FocusGained * call im_select#on_focus_gained()
+            autocmd FocusLost * call im_select#on_focus_lost()
+        endif
         autocmd VimLeavePre * call im_select#on_vim_leave_pre()
     augroup END
 endfunction
