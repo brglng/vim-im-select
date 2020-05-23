@@ -109,7 +109,7 @@ endif
 
 let g:ImSelectGetImCallback = get(g:, 'ImSelectGetImCallback', function('im_select#default_get_im_callback'))
 let g:im_select_switch_timeout = get(g:, 'im_select_switch_timeout', 50)
-let g:im_select_enable_focus_events = get(g:, 'im_select_enable_focus_events', 0)
+let g:im_select_enable_focus_events = get(g:, 'im_select_enable_focus_events', 1)
 
 let g:im_select_prev_im = ''
 
