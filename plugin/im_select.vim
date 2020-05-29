@@ -59,6 +59,17 @@ if !exists('g:im_select_get_im_cmd') || !exists('g:ImSelectSetImCmd')
             if !exists('g:im_select_default')
                 let g:im_select_default = '1'
             endif
+        elseif $GTK_IM_MODULE == 'fcitx5' || $QT_IM_MODULE == 'fcitx5'
+            let g:im_select_get_im_cmd = ['fcitx5-remote']
+            let g:ImSelectSetImCmd = {
+              \ key ->
+              \ key == 1 ? ['fcitx5-remote', '-c'] :
+              \ key == 2 ? ['fcitx5-remote', '-o'] :
+              \ execute("throw 'invalid im key'")
+              \ }
+            if !exists('g:im_select_default')
+                let g:im_select_default = '1'
+            endif
         elseif match($XDG_CURRENT_DESKTOP, '\cgnome') >= 0
             if $GTK_IM_MODULE == 'ibus'
                 let g:im_select_get_im_cmd = [
@@ -95,6 +106,17 @@ if !exists('g:im_select_get_im_cmd') || !exists('g:ImSelectSetImCmd')
                 \ key == 2 ? ['fcitx-remote', '-o'] :
                 \ execute("throw 'invalid im key'")
                 \ }
+                if !exists('g:im_select_default')
+                    let g:im_select_default = '1'
+                endif
+            elseif $GTK_IM_MODULE == 'fcitx5' || $QT_IM_MODULE == 'fcitx5'
+                let g:im_select_get_im_cmd = ['fcitx5-remote']
+                let g:ImSelectSetImCmd = {
+                            \ key ->
+                            \ key == 1 ? ['fcitx5-remote', '-c'] :
+                            \ key == 2 ? ['fcitx5-remote', '-o'] :
+                            \ execute("throw 'invalid im key'")
+                            \ }
                 if !exists('g:im_select_default')
                     let g:im_select_default = '1'
                 endif
