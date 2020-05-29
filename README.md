@@ -97,8 +97,17 @@ desktop. This will trigger `FocusLost` and `FocusGained` events, which causes
 problems. This option setups the timeout after the IM is switched. During the
 timeout, events are not responded. The default value is 50.
 
+### `g:im_select_enable_focus_events`
+
+Whether or not to enable `FocusLost` and `FocusGained` events. If your desktop
+already switches input methods among different windows/applications, you may
+want to set this option to 0 (e.g., this is the default setting on KDE). The
+default value is 1.
+
 ### `g:im_select_enable_for_win32_gvim`
 
 The plugin is disabled on GVim for Windows, as GVim for Windows already
 supports IM auto-switching. Set this variable to 1 if you want to enable
 anyway.
+
+<!-- vim: cc=79 -->
