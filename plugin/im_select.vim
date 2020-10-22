@@ -71,7 +71,7 @@ if !exists('g:im_select_get_im_cmd') || !exists('g:ImSelectSetImCmd')
                 let g:im_select_default = '1'
             endif
         elseif match($XDG_CURRENT_DESKTOP, '\cgnome') >= 0
-            if $GTK_IM_MODULE == 'ibus'
+            if $GTK_IM_MODULE == 'ibus' || $QT_IM_MODULE == 'ibus'
                 let g:im_select_get_im_cmd = [
                   \ 'gdbus', 'call', '--session',
                   \ '--dest', 'org.gnome.Shell',
