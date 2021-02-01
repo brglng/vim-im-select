@@ -181,10 +181,10 @@ function! im_select#set_im(im) abort
     call im_select#get_im(function('im_select#set_im_get_im_callback', [a:im]))
 endfunction
 
-let s:insert_enter_count = 0
+" let s:insert_enter_count = 0
 function! im_select#on_insert_enter() abort
-    let s:insert_enter_count += 1
-    echomsg 'InsertEnter: ' . s:insert_enter_count . ', mode: ' . mode() . ', event: ' . string(v:event)
+    " let s:insert_enter_count += 1
+    " echomsg 'InsertEnter: ' . s:insert_enter_count . ', mode: ' . mode() . ', event: ' . string(v:event)
     if s:focus_event_enabled
         if g:im_select_prev_im != ''
             call im_select#set_im(g:im_select_prev_im)
@@ -200,10 +200,10 @@ function! im_select#on_insert_leave_get_im_callback(code, stdout, stderr) abort
     return cur_im
 endfunction
 
-let s:insert_leave_count = 0
+" let s:insert_leave_count = 0
 function! im_select#on_insert_leave() abort
-    let s:insert_leave_count += 1
-    echomsg 'InsertLeave: ' . s:insert_leave_count . ', mode: ' . mode() . ', event: ' . string(v:event)
+    " let s:insert_leave_count += 1
+    " echomsg 'InsertLeave: ' . s:insert_leave_count . ', mode: ' . mode() . ', event: ' . string(v:event)
     if s:focus_event_enabled
         let j = im_select#get_and_set_prev_im('im_select#on_insert_leave_get_im_callback')
     endif
