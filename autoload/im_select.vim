@@ -184,7 +184,7 @@ endfunction
 let s:insert_enter_count = 0
 function! im_select#on_insert_enter() abort
     let s:insert_enter_count += 1
-    " echomsg 'InsertEnter: ' . s:insert_enter_count . ', mode: ' . mode() . ', event: ' . string(v:event)
+    echomsg 'InsertEnter: ' . s:insert_enter_count . ', mode: ' . mode() . ', event: ' . string(v:event)
     if s:focus_event_enabled
         if g:im_select_prev_im != ''
             call im_select#set_im(g:im_select_prev_im)
@@ -200,10 +200,10 @@ function! im_select#on_insert_leave_get_im_callback(code, stdout, stderr) abort
     return cur_im
 endfunction
 
-" let s:insert_leave_count = 0
+let s:insert_leave_count = 0
 function! im_select#on_insert_leave() abort
-    " let s:insert_leave_count += 1
-    " echomsg 'InsertLeave: ' . s:insert_leave_count . ', mode: ' . mode() . ', event: ' . string(v:event)
+    let s:insert_leave_count += 1
+    echomsg 'InsertLeave: ' . s:insert_leave_count . ', mode: ' . mode() . ', event: ' . string(v:event)
     if s:focus_event_enabled
         let j = im_select#get_and_set_prev_im('im_select#on_insert_leave_get_im_callback')
     endif
@@ -220,7 +220,7 @@ function! im_select#on_focus_gained() abort
     " let s:focus_gained_count += 1
     " echomsg 'FocusGained: ' . s:focus_gained_count
     if s:focus_event_enabled
-        if match(mode(), '^\(i\|R\|s\|S\|CTRL\-S\)') < 0
+        if match(mode(), '^\(i\|R\|s\|S\|t\|CTRL\-S\)') < 0
             let j = im_select#get_and_set_prev_im('im_select#on_focus_gained_get_im_callback')
         endif
     endif
@@ -231,7 +231,7 @@ function! im_select#on_focus_lost() abort
     " let s:focus_lost_count += 1
     " echomsg 'FocusLost: ' . s:focus_lost_count
     if s:focus_event_enabled
-        if match(mode(), '^\(i\|R\|s\|S\|CTRL\-S\)') < 0
+        if match(mode(), '^\(i\|R\|s\|S\|t\|CTRL\-S\)') < 0
             if g:im_select_prev_im != ''
                 call im_select#set_im(g:im_select_prev_im)
             else
@@ -243,7 +243,7 @@ endfunction
 
 function! im_select#on_vim_leave_pre() abort
     if s:gui
-        if match(mode(), '^\(i\|R\|s\|S\|CTRL\-S\)') < 0
+        if match(mode(), '^\(i\|R\|s\|S\|t\|CTRL\-S\)') < 0
             if g:im_select_prev_im != ''
                 execute 'silent! !' . join(call(g:ImSelectSetImCmd, [g:im_select_prev_im]), ' ')
             endif
