@@ -139,11 +139,11 @@ function! im_select#enable() abort
     augroup im_select
         autocmd!
         autocmd InsertEnter * call im_select#on_insert_enter()
-        if exists('#TermEnter')
+        if exists('##TermEnter')
             autocmd TermEnter * call im_select#on_insert_enter()
         endif
         autocmd InsertLeave * call im_select#on_insert_leave()
-        if exists('#TermLeave')
+        if exists('##TermLeave')
             autocmd TermLeave * call im_select#on_insert_leave()
         endif
         if g:im_select_enable_focus_events
