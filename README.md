@@ -104,11 +104,11 @@ already switches input methods among different windows/applications (e.g.,
 this is the default setting on KDE), you may want to set this option to 0. The
 default value is 1.
 
-### `g:im_select_enable_for_win32_gvim`
+### `g:im_select_enable_for_gvim`
 
-The plugin is disabled on GVim for Windows, as GVim for Windows already
-supports IM auto-switching. Set this variable to 1 if you want to enable
-anyway.
+The plugin is disabled on GVim for Windows or MacVim, as GVim for Windows and
+MacVim already supports IM auto-switching. Set this variable to 1 if you want
+to enable anyway.
 
 <!-- vim: cc=79
 -->

@@ -16,9 +16,9 @@ else
     endif
 endif
 
-let g:im_select_enable_for_win32_gvim = get(g:, 'im_select_enable_for_win32_gvim', 0)
+let g:im_select_enable_for_gvim = get(g:, 'im_select_enable_for_gvim', 0)
 
-if !has('nvim') && has('win32') && has('gui_running') && !g:im_select_enable_for_win32_gvim
+if !has('nvim') && has('gui_running') && (has('win32') || has('win64') || has('gui_mavim'))  && !g:im_select_enable_for_gvim
     finish
 endif
 
@@ -39,10 +39,10 @@ if !exists('g:im_select_get_im_cmd') || !exists('g:ImSelectSetImCmd')
 
         if !exists('g:im_select_default')
             if is_windows
-                echohl ErrorMsg | echomsg "Please set the default IM manually on Windows." | echohl None
-                finish
+                let g:im_select_default = '1033'
+            else
+                let g:im_select_default = 'com.apple.keylayout.ABC'
             endif
-            let g:im_select_default = 'com.apple.keylayout.ABC'
         endif
 
         let g:im_select_get_im_cmd = [g:im_select_command]
