@@ -93,7 +93,7 @@ let g:im_select_default = '1033'                      " The default value on Win
 You can get your current IM key by `im-select`.
 
 ```bash
-$> im-select
+$ im-select
 com.apple.keylayout.ABC
 ```
 
