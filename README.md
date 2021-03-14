@@ -83,6 +83,21 @@ let g:ImSelectGetImCallback = function('GetImCallback')
 
 This variable can be set to your own default IM key.
 
+e.g.
+
+```vim
+let g:im_select_default = 'com.apple.keylayout.ABC'
+```
+
+You can get your current IM key by `im-select`.
+
+```bash
+$> im-select
+com.apple.keylayout.ABC
+```
+
+You are likely to get `com.apple.keylayout.Dvorak` if you use Dvorak keyboard layout on macOS.
+
 ### `g:im_select_command`
 
 This variable can be set to the `im-select` program path of your own (only
