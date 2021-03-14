@@ -86,7 +86,8 @@ This variable can be set to your own default IM key.
 e.g.
 
 ```vim
-let g:im_select_default = 'com.apple.keylayout.ABC'
+let g:im_select_default = 'com.apple.keylayout.ABC'   " The default value on macOS
+let g:im_select_default = '1033'                      " The default value on Windows
 ```
 
 You can get your current IM key by `im-select`.
