@@ -220,7 +220,7 @@ function! im_select#on_focus_gained() abort
     " let s:focus_gained_count += 1
     " echomsg 'FocusGained: ' . s:focus_gained_count
     if s:focus_event_enabled
-        if match(mode(), '^\(i\|R\|s\|S\|t\|CTRL\-S\)') < 0
+        if match(mode(), '^\(c\|i\|R\|s\|S\|t\|CTRL\-S\)') < 0
             let j = im_select#get_and_set_prev_im('im_select#on_focus_gained_get_im_callback')
         endif
     endif
@@ -231,7 +231,7 @@ function! im_select#on_focus_lost() abort
     " let s:focus_lost_count += 1
     " echomsg 'FocusLost: ' . s:focus_lost_count
     if s:focus_event_enabled
-        if match(mode(), '^\(i\|R\|s\|S\|t\|CTRL\-S\)') < 0
+        if match(mode(), '^\(c\|i\|R\|s\|S\|t\|CTRL\-S\)') < 0
             if g:im_select_prev_im != ''
                 call im_select#set_im(g:im_select_prev_im)
             else
@@ -243,7 +243,7 @@ endfunction
 
 function! im_select#on_vim_leave_pre() abort
     if s:gui
-        if match(mode(), '^\(i\|R\|s\|S\|t\|CTRL\-S\)') < 0
+        if match(mode(), '^\(c\|i\|R\|s\|S\|t\|CTRL\-S\)') < 0
             if g:im_select_prev_im != ''
                 execute 'silent! !' . join(call(g:ImSelectSetImCmd, [g:im_select_prev_im]), ' ')
             endif
