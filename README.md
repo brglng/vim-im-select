@@ -126,5 +126,13 @@ The plugin is disabled on GVim for Windows or MacVim, as GVim for Windows and
 MacVim already supports IM auto-switching. Set this variable to 1 if you want
 to enable anyway.
 
+### `g:im_select_enable_cmd_line`
+
+Set this variable to 0 if you want disable IM switching in the command-line
+mode. This setting is useful for users who wish to use a different input method
+(specifically for English characters) in the command-line mode, as opposed to
+the main text.
+default value is 1.
+
 <!-- vim: cc=79
 -->
