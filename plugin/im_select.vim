@@ -48,23 +48,23 @@ if !exists('g:im_select_get_im_cmd') || !exists('g:ImSelectSetImCmd')
         let g:im_select_get_im_cmd = [g:im_select_command]
         let g:ImSelectSetImCmd = {key -> [g:im_select_command, key]}
     elseif has('unix')
-        if $GTK_IM_MODULE == 'fcitx' || $QT_IM_MODULE == 'fcitx'
-            let g:im_select_get_im_cmd = ['fcitx-remote']
-            let g:ImSelectSetImCmd = {
-              \ key ->
-              \ key == 1 ? ['fcitx-remote', '-c'] :
-              \ key == 2 ? ['fcitx-remote', '-o'] :
-              \ execute("throw 'invalid im key'")
-              \ }
-            if !exists('g:im_select_default')
-                let g:im_select_default = '1'
-            endif
-        elseif $GTK_IM_MODULE == 'fcitx5' || $QT_IM_MODULE == 'fcitx5'
+        if executable('fcitx5-remote')
             let g:im_select_get_im_cmd = ['fcitx5-remote']
             let g:ImSelectSetImCmd = {
               \ key ->
               \ key == 1 ? ['fcitx5-remote', '-c'] :
               \ key == 2 ? ['fcitx5-remote', '-o'] :
+              \ execute("throw 'invalid im key'")
+              \ }
+            if !exists('g:im_select_default')
+                let g:im_select_default = '1'
+            endif
+        elseif executable('fcitx-remote')
+            let g:im_select_get_im_cmd = ['fcitx-remote']
+            let g:ImSelectSetImCmd = {
+              \ key ->
+              \ key == 1 ? ['fcitx-remote', '-c'] :
+              \ key == 2 ? ['fcitx-remote', '-o'] :
               \ execute("throw 'invalid im key'")
               \ }
             if !exists('g:im_select_default')
@@ -98,25 +98,25 @@ if !exists('g:im_select_get_im_cmd') || !exists('g:ImSelectSetImCmd')
                 if !exists('g:im_select_default')
                     let g:im_select_default = 'xkb:us::eng'
                 endif
-            elseif $GTK_IM_MODULE == 'fcitx' || $QT_IM_MODULE == 'fcitx'
-                let g:im_select_get_im_cmd = ['fcitx-remote']
-                let g:ImSelectSetImCmd = {
-                \ key ->
-                \ key == 1 ? ['fcitx-remote', '-c'] :
-                \ key == 2 ? ['fcitx-remote', '-o'] :
-                \ execute("throw 'invalid im key'")
-                \ }
-                if !exists('g:im_select_default')
-                    let g:im_select_default = '1'
-                endif
             elseif $GTK_IM_MODULE == 'fcitx5' || $QT_IM_MODULE == 'fcitx5'
                 let g:im_select_get_im_cmd = ['fcitx5-remote']
                 let g:ImSelectSetImCmd = {
-                            \ key ->
-                            \ key == 1 ? ['fcitx5-remote', '-c'] :
-                            \ key == 2 ? ['fcitx5-remote', '-o'] :
-                            \ execute("throw 'invalid im key'")
-                            \ }
+                  \ key ->
+                  \ key == 1 ? ['fcitx5-remote', '-c'] :
+                  \ key == 2 ? ['fcitx5-remote', '-o'] :
+                  \ execute("throw 'invalid im key'")
+                  \ }
+                if !exists('g:im_select_default')
+                    let g:im_select_default = '1'
+                endif
+            elseif $GTK_IM_MODULE == 'fcitx' || $QT_IM_MODULE == 'fcitx'
+                let g:im_select_get_im_cmd = ['fcitx-remote']
+                let g:ImSelectSetImCmd = {
+                  \ key ->
+                  \ key == 1 ? ['fcitx-remote', '-c'] :
+                  \ key == 2 ? ['fcitx-remote', '-o'] :
+                  \ execute("throw 'invalid im key'")
+                  \ }
                 if !exists('g:im_select_default')
                     let g:im_select_default = '1'
                 endif
