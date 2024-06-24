@@ -139,17 +139,23 @@ endif
 let g:ImSelectGetImCallback = get(g:, 'ImSelectGetImCallback', function('im_select#default_get_im_callback'))
 let g:im_select_switch_timeout = get(g:, 'im_select_switch_timeout', 50)
 let g:im_select_enable_focus_events = get(g:, 'im_select_enable_focus_events', 1)
+let g:im_select_enable_cmd_line = get(g:, 'im_select_enable_cmd_line', 1)
 
 let g:im_select_prev_im = ''
 
 function! im_select#enable() abort
     augroup im_select
         autocmd!
-        autocmd InsertEnter,CmdLineEnter * call im_select#on_insert_enter()
+        if g:im_select_enable_cmd_line
+            autocmd InsertEnter,CmdLineEnter * call im_select#on_insert_enter()
+            autocmd InsertLeave,CmdLineLeave * call im_select#on_insert_leave()
+        else
+            autocmd InsertEnter * call im_select#on_insert_enter()
+            autocmd InsertLeave * call im_select#on_insert_leave()
+        endif
         if exists('##TermEnter')
             autocmd TermEnter * call im_select#on_insert_enter()
         endif
-        autocmd InsertLeave,CmdLineLeave * call im_select#on_insert_leave()
         if exists('##TermLeave')
             autocmd TermLeave * call im_select#on_insert_leave()
         endif
