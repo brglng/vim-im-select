@@ -1,4 +1,5 @@
 let s:focus_event_enabled = 1
+let g:im_select_enable_cmd_line_not_pre = 1
 
 if has('nvim')
     if exists('g:GuiLoaded')
@@ -185,8 +186,10 @@ endfunction
 function! im_select#on_insert_enter() abort
     " let s:insert_enter_count += 1
     " echomsg 'InsertEnter: ' . s:insert_enter_count . ', mode: ' . mode() . ', event: ' . string(v:event)
+
+    let s:cmd_stop_select_prev_im = g:im_select_enable_cmd_line_not_pre == 1 && mode() == 'c'
     if s:focus_event_enabled
-        if g:im_select_prev_im != ''
+        if g:im_select_prev_im != '' && !s:cmd_stop_select_prev_im
             call im_select#set_im(g:im_select_prev_im)
         else
             call im_select#get_and_set_prev_im(g:ImSelectGetImCallback)
