@@ -26,11 +26,12 @@ endif
 if !exists('g:im_select_get_im_cmd') || !exists('g:ImSelectSetImCmd')
     if has('win32') || has('win64') || has('win32unix') || has('wsl') || $PATH =~ '/mnt/c/WINDOWS'
         if !exists('g:im_select_command')
-            let cmd = exepath('im-select.exe')
-            if cmd == ''
-                echohl ErrorMsg | echomsg 'im-select.exe is not found on your system. Please refer to https://github.com/daipeihust/im-select' | echohl None
-                finish
-            endif
+            " let cmd = exepath('im-select.exe')
+            " if cmd == ''
+            "     echohl ErrorMsg | echomsg 'im-select.exe is not found on your system. Please refer to https://github.com/daipeihust/im-select' | echohl None
+            "     finish
+            " endif
+            let cmd = 'im-select.exe'
             let g:im_select_command = cmd
         endif
 
@@ -41,12 +42,12 @@ if !exists('g:im_select_get_im_cmd') || !exists('g:ImSelectSetImCmd')
         let g:ImSelectSetImCmd = {key -> [g:im_select_command, key]}
     elseif has('mac') || has('macunix') || has('osx') || has('osxdarwin')
         if !exists('g:im_select_command')
-            let cmd = exepath('im-select')
-            if cmd == ''
-                echohl ErrorMsg | echomsg 'im-select is not found on your system. Please refer to https://github.com/daipeihust/im-select' | echohl None
-                finish
-            endif
-
+            " let cmd = exepath('im-select')
+            " if cmd == ''
+            "     echohl ErrorMsg | echomsg 'im-select is not found on your system. Please refer to https://github.com/daipeihust/im-select' | echohl None
+            "     finish
+            " endif
+            let cmd = 'im-select'
             let g:im_select_command = cmd
         endif
         if !exists('g:im_select_default')
@@ -143,7 +144,7 @@ let g:im_select_enable_cmd_line = get(g:, 'im_select_enable_cmd_line', 1)
 
 let g:im_select_prev_im = ''
 
-function! im_select#enable() abort
+function! s:im_select_enable() abort
     augroup im_select
         autocmd!
         if g:im_select_enable_cmd_line
@@ -167,14 +168,14 @@ function! im_select#enable() abort
     augroup END
 endfunction
 
-function! im_select#disable() abort
+function! s:im_select_disable() abort
     autocmd! im_select
 endfunction
 
-command! -nargs=0 ImSelectEnable call im_select#enable()
-command! -nargs=0 ImSelectDisable call im_select#disable()
+command! -nargs=0 ImSelectEnable call s:im_select_enable()
+command! -nargs=0 ImSelectDisable call s:im_select_disable()
 
-call im_select#enable()
+call s:im_select_enable()
 
 let &cpo = s:save_cpo
 unlet s:save_cpo

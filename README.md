@@ -3,16 +3,16 @@ Improve Vim/Neovim experience with input methods.
 
 Basically, this plugin does these things:
 
-- Switch to the default IM of your choice on `InsertLeave`
-- Switch back to your previous IM on `InsertEnter`
-- Switch to the default IM of your choice on `FocusGained` if you are in
-  normal mode, or do nothing if not
-- Switch back to your previous IM on `FocusLost` if you are in normal mode, or
+- Switch to the "default IM" on `InsertLeave`
+- Switch back to the previous IM on `InsertEnter`
+- Switch to the "default IM" on `FocusGained` if you are in normal mode, or do
+  nothing if not
+- Switch back to the previous IM on `FocusLost` if you are in normal mode, or
   do nothing if not
-- If you are using a GUI (e.g., GVim), switch back to your previous IM before
+- If you are using a GUI (e.g., GVim), switch back to the previous IM before
   exiting Vim if you are in normal mode, or do nothing if you are in insert
-  mode. If you are under a terminal, switch to the default IM of your choice
-  before exiting Vim.
+  mode. If you are under a terminal, switch to the "default IM" before exiting
+  Vim.
 
 ## Requirements
 
@@ -28,8 +28,7 @@ be installed.
 [tmux-plugins/vim-tmux-focus-events](https://github.com/tmux-plugins/vim-tmux-focus-events)
 is recommended if you are using Tmux. This plugin provides `FocusGained` and
 `FocusLost` events for (Neo)Vim under Tmux. (NOTE: It is reported that this
-plugin does not work well with Vim/Vim cannot recognize the terminal code from
-this plugin, however it works well with Neovim.)
+plugin does not work well with Vim, however it works well with Neovim.)
 
 ## Commands
 
@@ -131,8 +130,7 @@ to enable anyway.
 Set this variable to 0 if you want disable IM switching in the command-line
 mode. This setting is useful for users who wish to use a different input method
 (specifically for English characters) in the command-line mode, as opposed to
-the main text.
-default value is 1.
+the main text. The default value is 1.
 
 <!-- vim: cc=79
 -->
