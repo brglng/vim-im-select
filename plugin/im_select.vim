@@ -18,7 +18,7 @@ endif
 
 let g:im_select_enable_for_gvim = get(g:, 'im_select_enable_for_gvim', 0)
 
-if !has('nvim') && has('gui_running') && (has('win32') || has('win64') || has('gui_mavim'))  && !g:im_select_enable_for_gvim
+if !has('nvim') && has('gui_running') && has('gui_mavim') && !g:im_select_enable_for_gvim
     finish
 endif
 
