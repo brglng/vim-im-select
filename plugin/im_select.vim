@@ -25,21 +25,9 @@ endif
 " OS and IM detection
 if !exists('g:im_select_get_im_cmd') || !exists('g:ImSelectSetImCmd')
     if has('win32') || has('win64') || has('win32unix') || has('wsl') || $PATH =~ '/mnt/c/WINDOWS'
-        if !exists('g:im_select_command')
-            " let cmd = exepath('im-select.exe')
-            " if cmd == ''
-            "     echohl ErrorMsg | echomsg 'im-select.exe is not found on your system. Please refer to https://github.com/daipeihust/im-select' | echohl None
-            "     finish
-            " endif
-            let cmd = 'im-select.exe'
-            let g:im_select_command = cmd
-        endif
-
-        if !exists('g:im_select_default')
-            let g:im_select_default = '1033'
-        endif
-        let g:im_select_get_im_cmd = [g:im_select_command]
-        let g:ImSelectSetImCmd = {key -> [g:im_select_command, key]}
+        let g:im_select_default = '1033'
+        let g:im_select_get_im_cmd = ['cmd', '/c', 'echo', '1033']
+        let g:ImSelectSetImCmd = {key -> ['cmd', '/c', 'echo', '1033']}
     elseif has('mac') || has('macunix') || has('osx') || has('osxdarwin')
         if !exists('g:im_select_command')
             " let cmd = exepath('im-select')

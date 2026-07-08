@@ -37,6 +37,12 @@ endfunction
 if has('nvim')
     let s:ImSetJob = {}
 
+    function s:ImSetJob.on_stdout(job_id, data, event) abort
+    endfunction
+
+    function s:ImSetJob.on_stderr(job_id, data, event) abort
+    endfunction
+
     function s:ImSetJob.wait() abort
         call jobwait([self.id])
     endfunction
@@ -82,6 +88,12 @@ if has('nvim')
 else
     let s:ImSetJob = {}
 
+    function s:ImSetJob.out_cb(channel, msg) abort
+    endfunction
+
+    function s:ImSetJob.err_cb(channel, msg) abort
+    endfunction
+
     function s:ImSetJob.exit_cb(job, status) abort
         let self.is_running = 0
     endfunction
@@ -96,6 +108,8 @@ else
         let object = copy(s:ImSetJob)
         let object.cmd = a:cmd
         let object.id = job_start(object.cmd, {
+          \ 'out_cb': object.out_cb,
+          \ 'err_cb': object.err_cb,
           \ 'exit_cb': object.exit_cb
           \ })
         let object.is_running = 1
