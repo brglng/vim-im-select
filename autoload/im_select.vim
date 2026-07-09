@@ -290,9 +290,9 @@ endfunction
 
 function! im_select#im_control_set_mode(chinese) abort
     if a:chinese
-        let cmd = [g:im_control_command, '-k', 'open', '-c', 'native']
+        let cmd = [g:im_control_command, '-c', 'native']
     else
-        let cmd = [g:im_control_command, '-k', 'open', '-c', 'alphanumeric']
+        let cmd = [g:im_control_command, '-c', 'alphanumeric']
     endif
     return s:ImSetJob.new(cmd)
 endfunction
