@@ -141,6 +141,7 @@ let g:ImSelectGetImCallback = get(g:, 'ImSelectGetImCallback', function('im_sele
 let g:im_select_switch_timeout = get(g:, 'im_select_switch_timeout', 50)
 let g:im_select_enable_focus_events = get(g:, 'im_select_enable_focus_events', 1)
 let g:im_select_enable_cmd_line = get(g:, 'im_select_enable_cmd_line', 1)
+let g:im_select_keep_default_im = get(g:, 'im_select_keep_default_im', 0)
 
 let g:im_select_prev_im = ''
 

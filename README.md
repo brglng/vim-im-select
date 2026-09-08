@@ -132,5 +132,10 @@ mode. This setting is useful for users who wish to use a different input method
 (specifically for English characters) in the command-line mode, as opposed to
 the main text. The default value is 1.
 
+### `g:im_select_keep_default_im`
+
+Set this variable to 1 if you want to keep the default IM unchanged when
+entering insert mode. The default value is 0.
+
 <!-- vim: cc=79
 -->
