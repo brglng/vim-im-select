@@ -186,7 +186,7 @@ function! im_select#on_insert_enter() abort
     " let s:insert_enter_count += 1
     " echomsg 'InsertEnter: ' . s:insert_enter_count . ', mode: ' . mode() . ', event: ' . string(v:event)
     if s:focus_event_enabled
-        if g:im_select_prev_im != ''
+        if g:im_select_prev_im != '' || (mode() ==# 'c' && g:im_select_enable_cmd_line)
             call im_select#set_im(g:im_select_prev_im)
         else
             call im_select#get_and_set_prev_im(g:ImSelectGetImCallback)
